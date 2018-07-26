@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/UI/user_page.dart';
 
+//import 'dart:async';
+//import 'dart:convert';
+//import 'package:http/http.dart' as http;
+
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,10 +30,10 @@ class LoginPageState extends State<LoginPage>
   void initState() {
     super.initState();
     _iconAnimationController = new AnimationController(
-        vsync: this, duration: new Duration(milliseconds: 500));
+        vsync: this, duration: new Duration(milliseconds: 600));
     _iconAnimation = new CurvedAnimation(
       parent: _iconAnimationController,
-      curve: Curves.bounceOut,
+      curve: Curves.linear,
     );
     _iconAnimation.addListener(() => this.setState(() {}));
     _iconAnimationController.forward();
@@ -59,8 +63,22 @@ class LoginPageState extends State<LoginPage>
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              new FlutterLogo(
-                size: _iconAnimation.value * 140.0,
+
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/logo.jpg'),
+                        colorFilter: ColorFilter.mode(Colors.greenAccent, BlendMode.darken),
+                        fit: BoxFit.fill,
+                      ),shape: BoxShape.circle,
+                    ),
+                    height: _iconAnimation.value * 130.0,
+                    width: _iconAnimation.value *  130.0,
+                  ),
+                ),
               ),
               new Container(
                 padding: const EdgeInsets.all(20.0),
@@ -82,10 +100,10 @@ class LoginPageState extends State<LoginPage>
                         keyboardType: TextInputType.text,
                       ),
                       new Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
+                        padding: const EdgeInsets.only(top: 25.0),
                       ),
                       new MaterialButton(
-                        height: 50.0,
+                        height: 40.0,
                         minWidth: 150.0,
                         color: Colors.green,
                         splashColor: Colors.amberAccent,
@@ -107,3 +125,30 @@ class LoginPageState extends State<LoginPage>
     );
   }
 }
+
+//Future<Post> fetchPost() async {
+//  final response =
+//  await http.get('https://jsonplaceholder.typicode.com/posts/1');
+//
+//  if (response.statusCode == 200) {
+//    // If the call to the server was successful, parse the JSON
+//    return Post.fromJson(json.decode(response.body));
+//  } else {
+//    // If that call was not successful, throw an error.
+//    throw Exception('Failed to load post');
+//  }
+//}
+//class Post {
+//  final String username;
+//  final String password;
+//
+//  Post({this.username, this.password});
+//
+//
+//  factory Post.fromJson(Map<String, dynamic> json) {
+//    return Post(
+//      username: json['username'],
+//      password: json['password'],
+//    );
+//  }
+//}

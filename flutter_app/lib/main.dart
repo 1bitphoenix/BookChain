@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/UI/login_page.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 void main() => runApp(new Login());
 

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/UI/search_page.dart';
+import 'package:flutter_app/UI/upload_page.dart';
+import 'package:flutter_app/UI/user_profile_page.dart';
 
 class UserPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
    return MaterialApp(
+     debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
           child: Center(
@@ -12,22 +16,31 @@ class UserPage extends StatelessWidget{
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/propic.jpeg'),
-                        fit: BoxFit.fill,
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserProfile()));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/propic.jpeg'),
+                          fit: BoxFit.fill,
+                        ),
+                        shape: BoxShape.circle,
                       ),
-                      shape: BoxShape.circle,
+                      height: 140.0,
+                      width: 140.0,
                     ),
-                    height: 140.0,
-                    width: 140.0,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: MaterialButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => UploadPage())
+                      );
+                    },
                     height: 70.0,
                     minWidth: 170.0,
                     splashColor: Colors.tealAccent,
@@ -39,7 +52,9 @@ class UserPage extends StatelessWidget{
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: MaterialButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
+                    },
                     height: 70.0,
                     minWidth: 170.0,
                     textColor: Colors.white,
