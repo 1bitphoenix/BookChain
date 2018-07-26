@@ -8,7 +8,34 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-
+book_db=[
+    {
+        'fname' : 1,
+        'title' : 'Being Peace',
+        'author' :'Author1'
+    },
+    {
+        'fname' : 2,
+        'title' : 'Computer Vision',
+        'author' :'OpenCV'
+    },
+    {
+        'fname' : 3,
+        'title' : 'Congo',
+        'author' :'Michael C.'
+    },
+    {
+        'fname' : 4,
+        'title' : 'Post Office',
+        'author' :'Charles B.'
+    }
+    # ,
+    # {
+    #     'fname' : 5,
+    #     'title' : 'Prey',
+    #     'author' :'Michael C.'
+    # }
+]
 from flask import abort
 from flask import request
 
@@ -82,14 +109,63 @@ def extract_books():
                 
             # Warp source image to destination based on homography
             im_out = cv2.warpPerspective(im_src, h, (im_dst.shape[1],im_dst.shape[0]))
-            cv2.imwrite("books"+str(ccn)+"//DETECTED BOOK"+str(total)+".jpg",im_out)
+            cv2.imwrite("books"+str(ccn)+"//"+str(total)+".jpg",im_out)
             total-=1
             # Show corners of the identified images
         # print ("ID: "+str(ccn))
-        return jsonify({'ID': ccn}), 201
     else:
         return jsonify({'Error': 'No Image Found'}), 404
+    from skimage.measure import compare_ssim as ssim
+    import sys
+    import shutil
 
+    # def mse(imageA, imageB):
+    #     # the 'Mean Squared Error' between the two images is the
+    #     # sum of the squared difference between the two images;
+    #     # NOTE: the two images must have the same dimension
+    #     err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+    #     err /= float(imageA.shape[0] * imageA.shape[1])	
+    #     return err
+
+    # def compare_images(imageA, imageB, title):
+    #     # compute the mean squared error and structural similarity
+    #     # index for the images
+    #     # m = mse(imageA, imageB)		# Basic Euclidean Algorithm for image similarity
+    #     # m = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+    #     # m /= float(imageA.shape[0] * imageA.shape[1])
+    #     s = ssim(imageA, imageB)	# Advanced Structural Similarity method
+    #     # print 'basic : %f' % (m)
+    #     return (s)
+    ccn=0
+    while os.path.isdir('books'+str(ccn)) == 0:
+        ccn+=1  	
+    list_found=[]
+    for up_book in os.listdir("books"+str(ccn)):
+        # print ("\n\n"+"Checking "+str(up_book))
+        new_book = True
+        for every in book_db:    # for every book in database 
+            check=cv2.imread("books"+str(ccn)+"//"+up_book,0)
+            ideal= cv2.imread("db//"+str(every['fname'])+'.jpg',0)					
+            # compare the images
+            factor = ssim(ideal, check) # compare uploaded book to every book in db folder
+            if factor > 0.7 :   # if match found
+                list_found.append(every)
+                new_book=False
+                                   
+            else:
+                continue
+        if new_book == True:
+            shutil.copy("books"+str(ccn)+"//"+str(up_book),"db//"+str(book_db[-1]['fname']+1)+".jpg")
+            newbook={
+                u'fname' : book_db[-1]['fname']+1,
+                u'title' : u'NewBook'+str(book_db[-1]['fname']+1),
+                u'author' :u'NewAuthor'+str(book_db[-1]['fname']+1)
+            }
+            book_db.append(newbook)
+    
+    shutil.rmtree("books"+str(ccn))
+    return make_response(jsonify({ u'success': u'Operation Completed', u'old_books_found' : list_found , u'all_books' : book_db}), 200)
+    
 
 
 # OUT OF BOUNDS FROM HERE !!!!
@@ -101,4 +177,4 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host= '0.0.0.0',debug=True)
