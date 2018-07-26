@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1081306440386",
+    "firebase_url": "https://bookchaindatabase.firebaseio.com",
+    "project_id": "bookchaindatabase",
+    "storage_bucket": "bookchaindatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081306440386:android:eaf95f4b7d92b19a",
+        "android_client_info": {
+          "package_name": "com.poala.bookchain"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081306440386-dg58soia4ch1sfl60egtt4fhcslghlt4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.poala.bookchain",
+            "certificate_hash": "ff4f21238aa86bc0986a23dc7110bee8d82c5848"
+          }
+        },
+        {
+          "client_id": "1081306440386-ajrb6dicopa812eekoaq1p0g7r5g8uip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnHthQhX2B8tABo9Jh0PwwYyw35lVSJGE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081306440386-ajrb6dicopa812eekoaq1p0g7r5g8uip.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
