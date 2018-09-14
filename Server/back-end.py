@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #// DETECTS THE BOOKS in image : upload.jpeg
 #// saves THE DETECTED BOOKS IN books FOLDER WITHIN pwd 
 # import the necessary packages
@@ -10,31 +9,25 @@ app = Flask(__name__)
 
 book_db=[
     {
-        'fname' : 1,
+        'book_id' : 1,
         'title' : 'Being Peace',
         'author' :'Author1'
     },
     {
-        'fname' : 2,
+        'book_id' : 2,
         'title' : 'Computer Vision',
         'author' :'OpenCV'
     },
     {
-        'fname' : 3,
+        'book_id' : 3,
         'title' : 'Congo',
         'author' :'Michael C.'
     },
     {
-        'fname' : 4,
+        'book_id' : 4,
         'title' : 'Post Office',
         'author' :'Charles B.'
     }
-    # ,
-    # {
-    #     'fname' : 5,
-    #     'title' : 'Prey',
-    #     'author' :'Michael C.'
-    # }
 ]
 from flask import abort
 from flask import request
@@ -53,7 +46,7 @@ def extract_books():
     from PIL import Image
 
     pil_image = Image.open(request.files['image']).convert('RGB')
-    open_cv_image = np.array(pil_image) 
+    open_cv_image = np.asarray(pil_image) 
     # Convert RGB to BGR 
     image = open_cv_image[:, :, ::-1].copy() 
     # load the image, convert it to grayscale, and blur it
@@ -65,8 +58,7 @@ def extract_books():
     edged = cv2.Canny(gray, 10, 250)
     # cv2.imshow("Edged", edged)
     # cv2.waitKey(0)
-    # construct and apply a closing kernel to 'close' gaps between 'white'
-    # pixels
+    # construct and apply a closing kernel to 'close' gaps between 'white' pixels
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
     closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
     # cv2.imshow("Closed", closed)
@@ -109,6 +101,8 @@ def extract_books():
                 
             # Warp source image to destination based on homography
             im_out = cv2.warpPerspective(im_src, h, (im_dst.shape[1],im_dst.shape[0]))
+            
+            # Save book covers in separate folders for multiple states
             cv2.imwrite("books"+str(ccn)+"//"+str(total)+".jpg",im_out)
             total-=1
             # Show corners of the identified images
@@ -135,36 +129,36 @@ def extract_books():
     #     # m /= float(imageA.shape[0] * imageA.shape[1])
     #     s = ssim(imageA, imageB)	# Advanced Structural Similarity method
     #     # print 'basic : %f' % (m)
-    #     return (s)
-    ccn=0
-    while os.path.isdir('books'+str(ccn)) == 0:
-        ccn+=1  	
-    list_found=[]
+    #     return (s)	
+    recalled_books=[]
+    new_books=[]
     for up_book in os.listdir("books"+str(ccn)):
         # print ("\n\n"+"Checking "+str(up_book))
         new_book = True
         for every in book_db:    # for every book in database 
             check=cv2.imread("books"+str(ccn)+"//"+up_book,0)
-            ideal= cv2.imread("db//"+str(every['fname'])+'.jpg',0)					
+            ideal= cv2.imread("db//"+str(every['book_id'])+'.jpg',0)					
+            if type(ideal) != type(None):
             # compare the images
-            factor = ssim(ideal, check) # compare uploaded book to every book in db folder
-            if factor > 0.7 :   # if match found
-                list_found.append(every)
-                new_book=False
+                factor = ssim(ideal, check) # compare uploaded book to every book in db folder
+                if factor > 0.7 :   # if match found
+                    recalled_books.append(every)
+                    new_book=False
                                    
             else:
-                continue
+                book_db.remove['book_id'] # Removes entries of books whose images are deleted from DB
         if new_book == True:
-            shutil.copy("books"+str(ccn)+"//"+str(up_book),"db//"+str(book_db[-1]['fname']+1)+".jpg")
+            newbook_id=book_db[-1]['book_id']+1
+            shutil.copy("books"+str(ccn)+"//"+str(up_book),"db//"+str(newbook_id)+".jpg")
             newbook={
-                u'fname' : book_db[-1]['fname']+1,
-                u'title' : u'NewBook'+str(book_db[-1]['fname']+1),
-                u'author' :u'NewAuthor'+str(book_db[-1]['fname']+1)
+                u'book_id' : newbook_id,
+                u'title' : u'NewBook'+str(newbook_id),
+                u'author' :u'NewAuthor'+str(newbook_id)
             }
             book_db.append(newbook)
-    
+            new_books.append(newbook)
     shutil.rmtree("books"+str(ccn))
-    return make_response(jsonify({ u'success': u'Operation Completed', u'old_books_found' : list_found , u'all_books' : book_db}), 200)
+    return make_response(jsonify({ u'success': u'Operation Completed', u'old_books_found' : recalled_books , u'all_books' : book_db, u'NEW' : new_books}), 200)
     
 
 
